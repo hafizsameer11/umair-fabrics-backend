@@ -26,8 +26,10 @@
             <div class="card-body">
                 <p class="mb-1"><strong>{{ $order->customer_name }}</strong></p>
                 <p class="mb-1">{{ $order->customer_phone }}</p>
+                @if($order->customer_phone_alt)<p class="mb-1 text-muted">Alt: {{ $order->customer_phone_alt }}</p>@endif
                 @if($order->customer_email)<p class="mb-1">{{ $order->customer_email }}</p>@endif
-                <p class="mb-0">{{ $order->shipping_address }}, {{ $order->city }}</p>
+                <p class="mb-1"><strong>Shipping:</strong> {{ $order->shipping_address }}, {{ $order->city }}</p>
+                <p class="mb-0"><strong>Billing:</strong> {{ $order->billing_address ?? $order->shipping_address }}, {{ $order->billing_city ?? $order->city }}</p>
                 @if($order->notes)<p class="mt-2 text-muted small">Notes: {{ $order->notes }}</p>@endif
             </div>
         </div>

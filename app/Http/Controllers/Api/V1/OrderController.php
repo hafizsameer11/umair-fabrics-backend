@@ -16,15 +16,31 @@ class OrderController extends Controller
         $data = $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
+            'customer_phone_alt' => 'nullable|string|max:20',
             'customer_email' => 'nullable|email',
             'shipping_address' => 'required|string',
             'city' => 'required|string|max:100',
+            'billing_same_as_shipping' => 'nullable|boolean',
+            'billing_address' => 'nullable|string',
+            'billing_city' => 'nullable|string|max:100',
             'notes' => 'nullable|string',
             'payment_method' => 'required|string',
             'items' => 'required|array|min:1',
             'items.*.variant_id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
         ]);
+
+        $billingSame = $request->boolean('billing_same_as_shipping', true);
+
+        if (! $billingSame) {
+            $request->validate([
+                'billing_address' => 'required|string',
+                'billing_city' => 'required|string|max:100',
+            ]);
+        }
+
+        $billingAddress = $billingSame ? $data['shipping_address'] : $data['billing_address'];
+        $billingCity = $billingSame ? $data['city'] : $data['billing_city'];
 
         if (! PaymentMethod::where('code', $data['payment_method'])->where('is_enabled', true)->exists()) {
             return response()->json(['message' => 'Invalid payment method.'], 422);
@@ -35,9 +51,12 @@ class OrderController extends Controller
                 [
                     'name' => $data['customer_name'],
                     'phone' => $data['customer_phone'],
+                    'phone_alt' => $data['customer_phone_alt'] ?? null,
                     'email' => $data['customer_email'] ?? null,
                     'address' => $data['shipping_address'],
                     'city' => $data['city'],
+                    'billing_address' => $billingAddress,
+                    'billing_city' => $billingCity,
                     'notes' => $data['notes'] ?? null,
                 ],
                 $data['items'],
