@@ -11,12 +11,13 @@ class Product extends Model
 {
     protected $fillable = [
         'title', 'slug', 'description_html', 'vendor', 'product_type', 'tags',
-        'status', 'featured', 'min_order_qty', 'max_order_qty', 'allow_sell_alone',
+        'status', 'featured', 'weight_grams', 'min_order_qty', 'max_order_qty', 'allow_sell_alone',
         'meta_title', 'meta_description', 'og_image',
     ];
 
     protected $casts = [
         'featured' => 'boolean',
+        'weight_grams' => 'integer',
         'min_order_qty' => 'integer',
         'max_order_qty' => 'integer',
         'allow_sell_alone' => 'boolean',

@@ -5,11 +5,15 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ShippingSetting;
+use App\Services\ShippingService;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
-    public function __construct(private CartService $cartService) {}
+    public function __construct(
+        private CartService $cartService,
+        private ShippingService $shippingService
+    ) {}
 
     /**
      * @param  array<int, array{variant_id: int, quantity: int}>  $items
@@ -22,14 +26,9 @@ class OrderService
             throw new \InvalidArgumentException(json_encode($validation['errors']));
         }
 
-        $shipping = ShippingSetting::where('is_active', true)->first();
         $subtotal = $validation['items']->sum('line_total');
-        $shippingCost = 0;
-
-        if ($shipping) {
-            $threshold = $shipping->free_shipping_threshold;
-            $shippingCost = ($threshold && $subtotal >= $threshold) ? 0 : (float) $shipping->flat_rate;
-        }
+        $shippingQuote = $this->shippingService->calculateForCart($validation['items'], (float) $subtotal);
+        $shippingCost = $shippingQuote['cost'];
 
         return DB::transaction(function () use ($customer, $validation, $paymentMethod, $subtotal, $shippingCost) {
             $order = Order::create([

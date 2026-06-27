@@ -33,7 +33,7 @@ class ProductResource extends JsonResource
             'status' => $this->status,
             'description_html' => $this->when(
                 $request->routeIs('api.v1.products.show'),
-                $this->description_html
+                fn () => $this->description_html
             ),
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,

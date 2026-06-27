@@ -8,8 +8,8 @@ use App\Http\Resources\CollectionResource;
 use App\Http\Resources\ProductResource;
 use App\Models\AnnouncementBar;
 use App\Models\Bundle;
+use App\Models\Collection;
 use App\Models\HeroSlide;
-use App\Models\HomepageSection;
 use App\Models\Menu;
 use App\Models\Page;
 use App\Models\PaymentMethod;
@@ -17,37 +17,30 @@ use App\Models\Product;
 use App\Models\Setting;
 use App\Models\ShippingSetting;
 use App\Services\CacheService;
+use App\Services\ShippingService;
 
 class StorefrontController extends Controller
 {
     public function settings()
     {
         return CacheService::remember('api.storefront', 300, function () {
-            $sections = HomepageSection::where('is_active', true)
+            $homepageSections = Collection::where('show_on_homepage', true)
                 ->orderBy('sort_order')
-                ->with(['collection.products' => function ($q) {
-                    $q->active()->with(['variants', 'images', 'companionProducts'])->limit(12);
+                ->with(['products' => function ($q) {
+                    $q->active()->with(['variants', 'images', 'companionProducts']);
                 }])
                 ->get()
-                ->map(function ($section) {
-                    $products = collect();
-
-                    if ($section->type === 'collection' && $section->collection) {
-                        $products = $section->collection->products->take($section->product_limit);
-                    } elseif ($section->type === 'featured_products') {
-                        $products = Product::active()->where('featured', true)
-                            ->with(['variants', 'images', 'companionProducts'])
-                            ->limit($section->product_limit)
-                            ->get();
-                    }
+                ->map(function (Collection $collection) {
+                    $limit = max(1, min(48, (int) ($collection->homepage_product_limit ?: 8)));
 
                     return [
-                        'id' => $section->id,
-                        'title' => $section->title,
-                        'subtitle' => $section->subtitle,
-                        'type' => $section->type,
-                        'collection_slug' => $section->collection?->slug,
-                        'products' => ProductResource::collection($products),
+                        'id' => $collection->id,
+                        'title' => $collection->homepage_title ?: $collection->name,
+                        'subtitle' => $collection->description,
+                        'type' => 'collection',
+                        'collection_slug' => $collection->slug,
+                        'product_limit' => $limit,
+                        'products' => ProductResource::collection($collection->products->take($limit)),
                     ];
                 });
 
@@ -73,8 +66,10 @@ class StorefrontController extends Controller
                     'image' => $s->imageUrl(),
                 ]),
                 'announcements' => AnnouncementBar::where('is_active', true)->orderBy('sort_order')->get(['message', 'link']),
-                'shipping' => ShippingSetting::where('is_active', true)->first(),
-                'homepage_sections' => $sections,
+                'shipping' => app(ShippingService::class)->rulesForApi(
+                    ShippingSetting::where('is_active', true)->first()
+                ),
+                'homepage_sections' => $homepageSections,
                 'bundles' => BundleResource::collection(
                     Bundle::active()->withCount('products')
                         ->with(['products' => fn ($q) => $q->active()])

@@ -11,12 +11,13 @@ class Collection extends Model
 {
     protected $fillable = [
         'name', 'slug', 'description', 'image', 'sort_order',
-        'show_on_homepage', 'homepage_title',
+        'show_on_homepage', 'homepage_title', 'homepage_product_limit',
     ];
 
     protected $casts = [
         'show_on_homepage' => 'boolean',
         'sort_order' => 'integer',
+        'homepage_product_limit' => 'integer',
     ];
 
     protected static function booted(): void

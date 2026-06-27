@@ -36,8 +36,13 @@ class DatabaseSeeder extends Seeder
         Setting::set('store_website', 'https://umairfabrics.com');
 
         ShippingSetting::updateOrCreate(['id' => 1], [
-            'name' => 'Pakistan Flat Rate',
-            'flat_rate' => 300,
+            'name' => 'Pakistan Weight Shipping',
+            'flat_rate' => 230,
+            'base_fee' => 230,
+            'weight_min_grams' => 100,
+            'weight_max_grams' => 3000,
+            'extra_step_grams' => 1000,
+            'extra_step_fee' => 50,
             'free_shipping_threshold' => null,
             'is_active' => true,
         ]);
@@ -62,16 +67,16 @@ class DatabaseSeeder extends Seeder
         ]);
 
         AnnouncementBar::updateOrCreate(['id' => 2], [
-            'message' => 'Standard shipping for only 300 PKR on all orders across Pakistan!',
+            'message' => 'Standard shipping from Rs.230 PKR based on order weight — nationwide delivery!',
             'is_active' => true,
             'sort_order' => 2,
         ]);
 
         $collections = [
-            ['name' => 'New Arrivals', 'slug' => 'new-arrivals', 'show_on_homepage' => false, 'homepage_title' => 'New Arrivals', 'sort_order' => 1],
-            ['name' => 'Saya Lawn 3Pc', 'slug' => 'saya-lawn-3pc', 'show_on_homepage' => false, 'homepage_title' => 'Saya Lawn 3Pc', 'sort_order' => 2],
-            ['name' => 'Maria B Lawn', 'slug' => 'maria-b-lawn', 'show_on_homepage' => false, 'homepage_title' => 'Maria B Lawn', 'sort_order' => 3],
-            ['name' => 'Mens Collection', 'slug' => 'mens-collection', 'show_on_homepage' => false, 'homepage_title' => 'Mens Collection', 'sort_order' => 4],
+            ['name' => 'New Arrivals', 'slug' => 'new-arrivals', 'show_on_homepage' => true, 'homepage_title' => 'New Arrivals', 'homepage_product_limit' => 8, 'sort_order' => 1],
+            ['name' => 'Saya Lawn 3Pc', 'slug' => 'saya-lawn-3pc', 'show_on_homepage' => true, 'homepage_title' => 'Saya Lawn 3Pc', 'homepage_product_limit' => 8, 'sort_order' => 2],
+            ['name' => 'Maria B Lawn', 'slug' => 'maria-b-lawn', 'show_on_homepage' => true, 'homepage_title' => 'Maria B Lawn', 'homepage_product_limit' => 8, 'sort_order' => 3],
+            ['name' => 'Mens Collection', 'slug' => 'mens-collection', 'show_on_homepage' => false, 'homepage_title' => 'Mens Collection', 'homepage_product_limit' => 8, 'sort_order' => 4],
         ];
 
         foreach ($collections as $data) {

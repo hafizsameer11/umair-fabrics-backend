@@ -1,12 +1,17 @@
 @extends('layouts.admin')
 @section('title', 'Homepage')
 @section('header', 'Homepage Sections')
-@php $collections = \App\Models\Collection::orderBy('name')->get(); @endphp
 @section('content')
+<div class="alert alert-info">
+    Homepage product sections are managed from <a href="{{ route('admin.collections.index') }}" class="alert-link">Collections</a>.
+    For each collection you can enable <strong>Show on homepage</strong>, set the max products, homepage title, and sort products inside the collection.
+</div>
+<p class="text-muted">The legacy homepage sections tool below is optional and no longer used on the storefront.</p>
+@php $collections = \App\Models\Collection::orderBy('name')->get(); @endphp
 <div class="row g-4">
     <div class="col-lg-5">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white fw-semibold">Add section</div>
+            <div class="card-header bg-white fw-semibold">Add section (legacy)</div>
             <div class="card-body">
                 <form method="POST" action="{{ route('admin.homepage.store') }}">
                     @csrf
@@ -22,7 +27,7 @@
         </div>
     </div>
     <div class="col-lg-7">
-        @foreach($sections as $section)
+        @forelse($sections as $section)
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
                     <form method="POST" action="{{ route('admin.homepage.update', $section) }}">
@@ -39,7 +44,9 @@
                     <form method="POST" action="{{ route('admin.homepage.destroy', $section) }}" class="mt-2 text-end">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Delete</button></form>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <p class="text-muted">No legacy sections. Use Collections to configure the homepage.</p>
+        @endforelse
     </div>
 </div>
 @endsection

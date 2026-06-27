@@ -156,6 +156,15 @@
             </div>
 
             <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white"><h2 class="h6 mb-0 fw-semibold">Shipping weight</h2></div>
+                <div class="card-body">
+                    <label class="form-label fw-medium">Weight (grams)</label>
+                    <input type="number" name="weight_grams" class="form-control" value="{{ old('weight_grams', $product->weight_grams ?? 500) }}" min="1" required>
+                    <div class="form-text">Used to calculate shipping at checkout. Example: a 3-piece suit ≈ 800–1200g.</div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white"><h2 class="h6 mb-0 fw-semibold">Purchase rules</h2></div>
                 <div class="card-body">
                     <label class="form-label">Minimum order quantity</label>

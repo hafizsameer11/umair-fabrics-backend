@@ -24,5 +24,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/pages/{slug}', [StorefrontController::class, 'page']);
 
     Route::post('/cart/validate', [CartController::class, 'validate']);
+    Route::post('/cart/shipping', [CartController::class, 'shipping']);
     Route::post('/orders', [OrderController::class, 'store']);
 });

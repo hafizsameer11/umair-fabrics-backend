@@ -22,6 +22,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('products/{product}/duplicate', [ProductController::class, 'duplicate'])->name('products.duplicate');
     Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
 
+    Route::post('collections/reorder', [CollectionController::class, 'reorder'])->name('collections.reorder');
     Route::resource('collections', CollectionController::class)->except(['show']);
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
