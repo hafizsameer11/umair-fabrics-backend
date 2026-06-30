@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\MediaUrl;
 use Illuminate\Database\Eloquent\Model;
 
 class HeroSlide extends Model
@@ -15,7 +16,7 @@ class HeroSlide extends Model
 
     public function imageUrl(): ?string
     {
-        return $this->image ? asset('storage/'.$this->image) : null;
+        return MediaUrl::fromStoragePath($this->image);
     }
 
     public function scopeActive($query)

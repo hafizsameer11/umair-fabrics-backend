@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\MediaUrl;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
@@ -36,7 +37,7 @@ class Bundle extends Model
 
     public function imageUrl(): ?string
     {
-        return $this->image ? asset('storage/'.$this->image) : null;
+        return MediaUrl::fromStoragePath($this->image);
     }
 
     public function subtotal(): float

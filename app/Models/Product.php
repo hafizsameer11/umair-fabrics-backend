@@ -108,6 +108,6 @@ class Product extends Model
     {
         $image = $this->images->first();
 
-        return $image ? asset('storage/'.$image->path) : null;
+        return $image ? $image->url() : null;
     }
 }

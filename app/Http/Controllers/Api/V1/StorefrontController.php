@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Support\MediaUrl;
 use App\Http\Resources\BundleResource;
 use App\Http\Resources\CollectionResource;
 use App\Http\Resources\ProductResource;
@@ -51,7 +52,7 @@ class StorefrontController extends Controller
                     'email' => config('brand.email'),
                     'website' => config('brand.website'),
                     'logo' => Setting::get('store_logo')
-                        ? asset('storage/'.Setting::get('store_logo'))
+                        ? MediaUrl::fromStoragePath(Setting::get('store_logo'))
                         : config('brand.logo'),
                     'whatsapp' => config('brand.whatsapp'),
                     'currency' => config('brand.currency'),

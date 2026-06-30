@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\MediaUrl;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,10 +24,6 @@ class ProductImage extends Model
 
     public function url(): string
     {
-        if (str_starts_with($this->path, 'http://') || str_starts_with($this->path, 'https://')) {
-            return $this->path;
-        }
-
-        return asset('storage/'.$this->path);
+        return MediaUrl::fromStoragePath($this->path) ?? '';
     }
 }
