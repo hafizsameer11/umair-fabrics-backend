@@ -15,7 +15,11 @@ class ProductVariantResource extends JsonResource
             'sku' => $this->sku,
             'price' => (float) $this->price,
             'compare_at_price' => $this->compare_at_price ? (float) $this->compare_at_price : null,
-            'stock' => $this->stock,
+            'stock' => $this->when(
+                $this->product->show_stock_to_customers,
+                fn () => $this->stock
+            ),
+            'max_quantity' => $this->maxPurchasableQty(),
             'available' => $this->isAvailable(),
             'option1' => $this->option1,
             'option2' => $this->option2,

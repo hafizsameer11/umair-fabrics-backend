@@ -132,7 +132,16 @@
                             </tbody>
                         </table>
                     </div>
-                    <p class="small text-muted p-3 mb-0"><i class="bi bi-info-circle me-1"></i>Stock = 0 shows as <strong>Sold out</strong> on the store. Use <i class="bi bi-x-circle"></i> to quickly set out of stock.</p>
+                    <p class="small text-muted p-3 mb-0 border-top"><i class="bi bi-info-circle me-1"></i>Stock = 0 or below minimum order qty shows as <strong>Sold out</strong>. Use <i class="bi bi-x-circle"></i> to quickly set out of stock.</p>
+                    <div class="p-3 border-top bg-light">
+                        <input type="hidden" name="show_stock_to_customers" value="0">
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" name="show_stock_to_customers" value="1" id="showStock"
+                                @checked(old('show_stock_to_customers', $product->show_stock_to_customers ?? false))>
+                            <label class="form-check-label fw-medium" for="showStock">Show stock quantity to customers</label>
+                        </div>
+                        <p class="small text-muted mb-0 mt-2">When enabled, customers see how many items are left on the product page.</p>
+                    </div>
                 </div>
             </div>
         </div>

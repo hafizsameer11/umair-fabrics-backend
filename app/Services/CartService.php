@@ -16,6 +16,12 @@ class CartService
         $errors = [];
         $validated = collect();
 
+        $quantitiesByVariant = [];
+        foreach ($items as $item) {
+            $variantId = (int) ($item['variant_id'] ?? 0);
+            $quantitiesByVariant[$variantId] = ($quantitiesByVariant[$variantId] ?? 0) + (int) ($item['quantity'] ?? 1);
+        }
+
         $cartProductIds = collect($items)->map(function ($item) {
             $variant = ProductVariant::find($item['variant_id'] ?? 0);
 
@@ -34,6 +40,20 @@ class CartService
             $product = $variant->product;
             $qty = (int) ($item['quantity'] ?? 1);
             $minQty = $variant->effectiveMinQty();
+            $maxQty = $variant->maxPurchasableQty();
+            $totalForVariant = $quantitiesByVariant[$variant->id] ?? $qty;
+
+            if (! $variant->isAvailable()) {
+                $errors[] = [
+                    'index' => $index,
+                    'variant_id' => $variant->id,
+                    'message' => 'This item is out of stock.',
+                    'code' => 'out_of_stock',
+                    'available' => 0,
+                ];
+
+                continue;
+            }
 
             if ($qty < $minQty) {
                 $errors[] = [
@@ -41,6 +61,18 @@ class CartService
                     'variant_id' => $variant->id,
                     'message' => "Minimum order quantity is {$minQty}.",
                     'min_order_qty' => $minQty,
+                ];
+
+                continue;
+            }
+
+            if ($product->max_order_qty && $totalForVariant > $product->max_order_qty) {
+                $errors[] = [
+                    'index' => $index,
+                    'variant_id' => $variant->id,
+                    'message' => "Maximum order quantity is {$product->max_order_qty}.",
+                    'code' => 'max_order_qty',
+                    'max_order_qty' => $product->max_order_qty,
                 ];
 
                 continue;
@@ -72,12 +104,19 @@ class CartService
                 }
             }
 
-            if ($variant->stock < $qty) {
+            if ($totalForVariant > $maxQty) {
+                $message = $maxQty <= 0
+                    ? 'This item is out of stock.'
+                    : ($maxQty === 1
+                        ? 'Only 1 item left in stock.'
+                        : "Only {$maxQty} items available in stock.");
+
                 $errors[] = [
                     'index' => $index,
                     'variant_id' => $variant->id,
-                    'message' => 'Insufficient stock.',
-                    'available' => $variant->stock,
+                    'message' => $message,
+                    'code' => 'insufficient_stock',
+                    'available' => $maxQty,
                 ];
 
                 continue;

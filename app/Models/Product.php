@@ -11,7 +11,7 @@ class Product extends Model
 {
     protected $fillable = [
         'title', 'slug', 'description_html', 'vendor', 'product_type', 'tags',
-        'status', 'featured', 'weight_grams', 'min_order_qty', 'max_order_qty', 'allow_sell_alone',
+        'status', 'featured', 'weight_grams', 'min_order_qty', 'max_order_qty', 'show_stock_to_customers', 'allow_sell_alone',
         'meta_title', 'meta_description', 'og_image',
     ];
 
@@ -21,6 +21,7 @@ class Product extends Model
         'min_order_qty' => 'integer',
         'max_order_qty' => 'integer',
         'allow_sell_alone' => 'boolean',
+        'show_stock_to_customers' => 'boolean',
     ];
 
     protected static function booted(): void
@@ -96,7 +97,11 @@ class Product extends Model
 
     public function isSoldOut(): bool
     {
-        return $this->variants->every(fn ($v) => $v->stock <= 0);
+        if ($this->variants->isEmpty()) {
+            return true;
+        }
+
+        return $this->variants->every(fn ($v) => ! $v->isAvailable());
     }
 
     public function minPrice(): float

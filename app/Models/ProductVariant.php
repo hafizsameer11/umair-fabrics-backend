@@ -38,7 +38,14 @@ class ProductVariant extends Model
 
     public function isAvailable(): bool
     {
-        return $this->stock > 0;
+        return $this->stock >= $this->effectiveMinQty();
+    }
+
+    public function maxPurchasableQty(): int
+    {
+        $cap = $this->product->max_order_qty;
+
+        return $cap ? min($this->stock, $cap) : $this->stock;
     }
 
     public function salePercent(): ?int

@@ -20,6 +20,8 @@ class ProductResource extends JsonResource
             'tags' => $this->tags ? explode(',', $this->tags) : [],
             'featured' => $this->featured,
             'min_order_qty' => $this->min_order_qty,
+            'max_order_qty' => $this->max_order_qty,
+            'show_stock_to_customers' => (bool) $this->show_stock_to_customers,
             'allow_sell_alone' => (bool) $this->allow_sell_alone,
             'purchase_rule_label' => $this->when(
                 $request->routeIs('api.v1.products.show') || ! $this->allow_sell_alone || $this->min_order_qty > 1,
