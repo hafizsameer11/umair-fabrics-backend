@@ -11,7 +11,11 @@ composer install --no-dev --optimize-autoloader --no-interaction
 
 if [ -f .env ]; then
   php artisan migrate --force
-  php artisan storage:link 2>/dev/null || true
+  if ! php artisan storage:link 2>/dev/null; then
+    echo "==> storage:link unavailable — syncing files to public/storage..."
+    mkdir -p public/storage
+    cp -R storage/app/public/. public/storage/ 2>/dev/null || true
+  fi
   php artisan config:cache
   php artisan route:cache
   php artisan view:cache
