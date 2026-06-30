@@ -25,6 +25,7 @@ class HeroSlideController extends Controller
         $data = $this->validated($request);
         $data['sort_order'] = HeroSlide::max('sort_order') + 1;
         $data['is_active'] = $request->boolean('is_active', true);
+        $data['countdown_ends_at'] = $request->input('countdown_ends_at') ?: null;
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('hero-slides', 'public');
@@ -40,6 +41,7 @@ class HeroSlideController extends Controller
     {
         $data = $this->validated($request);
         $data['is_active'] = $request->boolean('is_active');
+        $data['countdown_ends_at'] = $request->input('countdown_ends_at') ?: null;
 
         if ($request->hasFile('image')) {
             if ($slide->image) {
@@ -73,6 +75,7 @@ class HeroSlideController extends Controller
             'button_text' => 'nullable|string|max:100',
             'button_url' => 'nullable|string|max:500',
             'image' => 'nullable|image|max:4096',
+            'countdown_ends_at' => 'nullable|date',
         ]);
     }
 

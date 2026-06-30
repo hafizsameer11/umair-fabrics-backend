@@ -9,10 +9,13 @@ class HeroSlide extends Model
 {
     protected $fillable = [
         'title', 'subtitle', 'button_text', 'button_url',
-        'image', 'sort_order', 'is_active',
+        'image', 'countdown_ends_at', 'sort_order', 'is_active',
     ];
 
-    protected $casts = ['is_active' => 'boolean'];
+    protected $casts = [
+        'is_active' => 'boolean',
+        'countdown_ends_at' => 'datetime',
+    ];
 
     public function imageUrl(): ?string
     {

@@ -65,6 +65,7 @@ class StorefrontController extends Controller
                     'button_text' => $s->button_text,
                     'button_url' => $s->button_url,
                     'image' => $s->imageUrl(),
+                    'countdown_ends_at' => $s->countdown_ends_at?->toIso8601String(),
                 ]),
                 'announcements' => AnnouncementBar::where('is_active', true)->orderBy('sort_order')->get(['message', 'link']),
                 'shipping' => app(ShippingService::class)->rulesForApi(
