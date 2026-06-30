@@ -58,12 +58,12 @@ class StorefrontController extends Controller
                     'currency' => config('brand.currency'),
                 ],
                 'social' => config('brand.social'),
-                'hero_slides' => HeroSlide::active()->get()->map(fn ($s) => [
+                'hero_slides' => HeroSlide::active()->with('collection')->get()->map(fn ($s) => [
                     'id' => $s->id,
-                    'title' => $s->title,
+                    'title' => $s->title ?: null,
                     'subtitle' => $s->subtitle,
                     'button_text' => $s->button_text,
-                    'button_url' => $s->button_url,
+                    'button_url' => $s->linkUrl(),
                     'image' => $s->imageUrl(),
                     'countdown_ends_at' => $s->countdown_ends_at?->toIso8601String(),
                 ]),
